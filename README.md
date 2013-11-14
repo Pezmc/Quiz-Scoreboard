@@ -7,8 +7,7 @@ Note, some of the code (especially the CSS) was done last minute and is a bit ha
 Subpit a pull request if you have any suggestions or improvements.
 
 Summary
-
-===
+====
 
 There are two main "screens" and three different types of scoreboard.
 On the home screen there are two scoreboards:
