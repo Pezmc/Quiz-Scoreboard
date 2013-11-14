@@ -3,17 +3,20 @@
 <head>
 <title>Pub Quiz Scoreboard</title>
 <link rel="stylesheet" href="main.css" />
-<link rel="stylesheet" type="text/css" href="style/style.css" title="style" />
+<link rel="stylesheet" type="text/css" href="css/style.css" title="style" />
 <link rel="shortcut icon" href="images/favicon.ico" />
 </head>
 
 <body id="roundScoresPopup" style="position:relative">
+
   <center><h2 id="roundScoresTitle">Name</h2></center>
   <div class="buttons">
     <img src="images/back_button.jpeg" id="roundBackward" style="float:left"; />
     <img src="images/forward_button.jpeg" id="roundForward" style="float:right" />
   </div>
   <br />
+  
+  <!-- Table we display our rounds in -->
   <table id="roundScoresTable">
     <thead>
         <tr>
@@ -29,231 +32,16 @@
   <br />
   
 
-<table id="scoreTable" style="display:none">
-</table>
-  
-<table id="emptyScoreTable" cellspacing="5" style="display:none">
-  <thead>
-    <th>Name</th>
-  </thead>
-  <tbody>
-    <tr>
-      <td>Pez</td>
-    </tr>
-  </tbody>
-</table>
-</div>
-</body>
+<!-- Hidden table where we store our data -->
+<table id="scoreTable" style="display:none"></table>
 
+<!-- Our JS -->
+<script src="js/lib/jquery-1.7.2.min.js"></script>
+<script src="js/lib/animator.js"></script>
+<script src="js/lib/sorttables.js"></script>
+<script src="js/lib/rankingTableUpdate.js"></script>
+<script src="js/tables.js"></script>
+<script src="js/popup.js"></script>
 
-
-<div class="wrap">
-
-
-<script src="jquery-1.7.2.min.js"></script>
-<script src="animator.js"></script>
-<script src="sorttables.js"></script>
-<script src="rankingTableUpdate.js"></script>
-<script src="main.js"></script>
-
-<script>
-
-$(function() {
-
-  // If we have a saved table load it
-  if(tableSaved('teams')) {
-    tableLoad('teams', $('#scoreTable'));
-  } else {
-    alert("No saved table to load!");
-  }
-
-  
-  // Allow the score table to be edited
-  var $scoreTable = $('#scoreTable');
-  
-  ////////////// Event Handlers ////////////  
-  var currentRound = 0;
-  displayRound($('#roundScoresPopup'), 1);
-  
-  function getRoundNames() {
-    var colCount = 0;
-    var roundNames = new Array();
-    
-    $('#scoreTable').find('thead th').each(function () {
-      if(colCount > 0) {
-        roundNames[colCount] = $(this).text();
-      }
-      colCount++;
-    });
-    
-    return roundNames;
-  }
-  
-  function getRoundScores() {
-    var roundScores = new Array();
-    var item = 0;
-    
-    // For every row
-    $('#scoreTable').find('tbody tr').each(function () {
-    
-      var score = 0;
-      var round = 0;
-      roundScores[item] = new Array();
-      
-      // For every item in the row, where 0 is the team name...
-      $(this).find('td').each(function() {
-        if(round == 0) roundScores[item][round] = $(this).text();
-        else { 
-          score += parseInt($(this).text());
-          roundScores[item][round] = score;
-        }
-        
-        round++;
-      });
-      
-      item++;
-
-    });
-    
-    return roundScores;
-  }
-  
-  
-  var roundUpdateNeeded = false;
-  var roundUpdating = false;
-  function displayRound($body, roundID) {
-  
-    console.log("Loading page: " + roundID);
-  
-    if(roundUpdating) {
-      //roundUpdateNeeded = true;
-      return;
-    }
-    
-    roundUpdating = true;
-        
-    var roundNames = getRoundNames();
-    var roundScores = getRoundScores();
-    
-    console.log(roundNames);
-  
-    $body.find('#roundScoresTitle').text(roundNames[roundID]);
-    $oldTable = $body.find('#roundScoresTable');
-    
-    $newTable = $oldTable.clone();
-    $newTable.hide();
-    
-    $body.append($newTable);
-    
-    $tbody = $newTable.find('tbody');
-    $tbody.empty();
-    
-    // For each team
-    for (var i = 0; i < roundScores.length; i++) {      
-      $tbody.append("<tr><td>?</td><td>"+roundScores[i][0]+"</td><td>"+roundScores[i][roundID]+"</td></tr>");
-    }
-    
-    if(roundID < roundNames.length - 1) {
-      $body.find("#roundForward").show();
-      $body.find("#roundForward").unbind('click').click(function() {
-        displayRound($('#roundScoresPopup'), roundID + 1);
-      });
-    } else {
-      $body.find("#roundForward").hide();
-    }
-    
-    if(roundID > 1) {
-      $body.find("#roundBackward").show();
-      $body.find("#roundBackward").unbind('click').click(function() {
-        displayRound($('#roundScoresPopup'), roundID - 1);
-      });      
-    } else {
-      $body.find("#roundBackward").hide();
-    }
-    
-    sortTable($newTable);
-    updateRank($newTable, 1);
-    $oldTable.rankingTableUpdate($newTable, {
-      onComplete: function(){
-        console.log("Complete Round Table");
-        roundUpdating = false;
-      }
-    });
-    
-  }
-  
-  ////////////// Store Tables in Local Storage ///////////////  
-  function tableGetStorageName(name) {
-    return "table" + name;
-  }
-  
-  function tableSaved(name) {
-    return localStorage.getItem(tableGetStorageName(name)) != null;
-  }
-  
-  function tableLoad(name, $tableToLoadInto) {
-      if(tableSaved(name))
-        $tableToLoadInto.html(localStorage.getItem(tableGetStorageName(name)));
-      else
-        alert("Error: No table named "+name+", has been saved!");
-  }
-  
-  function isNumber(n) {
-      return !isNaN(parseFloat(n)) && isFinite(n);
-  }
-  
-  function compareCells(a, b) {
-      var b = $.text([b]);
-      var a = $.text([a]);
-
-      if (isNumber(a) && isNumber(b)) {
-          return parseInt(b) - parseInt(a);
-      } else {
-          return a.localeCompare(b);
-      }
-  }
-  
-  function updateRank(table, index) {
-      var position = 1;
-      if (!index) index = 1;
-
-      $("tbody tr", table).each(function() {
-          var cell = $("td:nth-child(" + index + ")", this);
-          if (parseInt(cell.text()) != position) cell.text(position); //only change if needed
-          position++;
-      });
-  }
-  
-  // Take a table and order it by the column with anim:sort
-  function sortTable(table) {
-  
-    //What column are we ordering on?
-    var sortIndex = table.find(".anim\\:sort").index();
-    
-    //Old table order
-    var idIndex = table.find(".anim\\:id").index();
-    var startList = table.find('td').filter(function() {
-      return $(this).index() === idIndex;
-    });
-    
-    //Sort the list
-    table.find('td').filter(function() {
-        return $(this).index() === sortIndex;
-    }).sortElements(compareCells, function() { // parentNode is the row we want to move
-        return this.parentNode;
-    });
-
-    //New table order
-    var idIndex = table.find(".anim\\:id").index();
-    var endList = table.find('td').filter(function() {
-        return $(this).index() === idIndex;
-    });
-  }
-
-});
-
-
-
-</script>
 </body>
 </html>
