@@ -10,4 +10,4 @@ Subpit a pull request if you have any suggestions or improvements.
 Demo 
 ====
 
-[![ScreenShot](https://raw.github.com/Pezmc/Pub-Quiz-Scoreboard/blob/master/images/pubQuizYoutube.png)](http://youtu.be/Fu2zBQlXqpA)
+[![ScreenShot](https://raw.github.com/Pezmc/Pub-Quiz-Scoreboard/master/images/pubQuizYoutube.png)](http://youtu.be/Fu2zBQlXqpA)
