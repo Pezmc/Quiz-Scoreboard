@@ -3,7 +3,7 @@
 <head>
 <title>Pub Quiz Scoreboard</title>
 <link rel="stylesheet" href="main.css" />
-<link rel="stylesheet" type="text/css" href="style/style.css" title="style" />
+<link rel="stylesheet" type="text/css" href="css/style.css" title="style" />
 <link rel="shortcut icon" href="images/favicon.ico" />
 </head>
 
@@ -12,7 +12,6 @@
     <div id="header">
       <div id="logo">
         <div id="logo_text">
-          <!-- class="logo_colour", allows you to change the colour of the text -->
           <h1><a href="index.html">Pub<span class="logo_colour">Quiz</span></a></h1>
           <h2>A simple scoreboard.</h2>
         </div>
@@ -21,14 +20,16 @@
     <div id="site_content">
       <div id="content">
         <h1>Teams</h1>
+        
+        <!-- The table data where we store our data -->
         <table id="scoreTable">
         </table>
-        </div>
         
         <br />
         <a href="#" id="addNewTeam">Add New Team</a>
         <a href="#" id="addNewRound">Add New Round</a>
         <a href="#" id="resetTable">Reset Table</a>
+        <a href="#" id="roundScoreBoard">Popup Scoreboard</a>        
         
         <h1>Live Scoreboard</h1>
         <div class="demo">
@@ -52,6 +53,7 @@
     </div>
   </div>
   
+<!-- Hidden table that provides the default data -->
 <table id="emptyScoreTable" cellspacing="5" style="display:none">
   <thead>
     <th>Name</th>
@@ -65,278 +67,13 @@
 </div>
 </body>
 
+<!-- Our JS -->
+<script src="js/lib/jquery-1.7.2.min.js"></script>
+<script src="js/lib/animator.js"></script>
+<script src="js/lib/sorttables.js"></script>
+<script src="js/lib/rankingTableUpdate.js"></script>
+<script src="js/tables.js"></script>
+<script src="js/scoreboard.js"></script>
 
-
-<div class="wrap">
-
-
-
-
-<script src="jquery-1.7.2.min.js"></script>
-<script src="animator.js"></script>
-<script src="sorttables.js"></script>
-<script src="rankingTableUpdate.js"></script>
-<script src="main.js"></script>
-
-<script>
-
-$(function() {
-
-  // If we have a saved table load it
-  if(tableSaved('teams')) {
-    tableLoad('teams', $('#scoreTable'));
-  } else {
-    resetScoreTable();
-  }
-  
-  // Force a touch (to update the live scoreboard)
-  teamTableTouched();
-  
-  // Allow the score table to be edited
-  var $scoreTable = $('#scoreTable');
-  $scoreTable.attr("contenteditable","true");
-  
-  // On edit, throw an event
-  $scoreTable.blur(function() {
-    teamTableTouched($(this));
-  });
-  
-  // If we try to leave the page, throw a warning!
-  window.onbeforeunload = function() {
-    return "If you leave you may lose all the scores!";
-  }
-  
-  // Bind our three menu buttons
-  $('#resetTable').click(function () {
-    var reset = confirm("Are you sure you want to do this?");
-    if (reset) {
-      reset = confirm("This will DELETE all the data! Are you double sure?");
-      if (reset) {
-        resetScoreTable();
-      }
-    }    
-  });
-  
-  // Clicking new team => add that team to the rounds table
-  $('#addNewTeam').click(function() {
-    var teamName=prompt("Please enter the team's name");
-    
-    if(teamName == null) return;
-
-    // Check the name doesn't already exists
-    var alreadyExists = false;
-    $scoreTable.find('tbody tr td:first-child').each(function () {
-      if($(this).text().toLowerCase() == teamName.toLowerCase()) {
-        alreadyExists = true;
-        return;
-      }
-    })
-    if(alreadyExists) {
-      alert("That name already exists, please try another!");
-      return;
-    }
-
-    var colCount = 0;    
-    $scoreTable.find('thead th').each(function () {
-      colCount++;
-    });
-    
-    var scoreTDs = "";
-    for (var i = 1; i < colCount; i++) {
-      scoreTDs += '<td>0</td>';
-    }
-        
-    $scoreTable.find('tr:last').after('<tr><td>'+teamName+'</td>'+scoreTDs+'</tr>');
-    teamTableTouched();
-  });
-  
-  // Adding a round, just adds another column
-  $('#addNewRound').click(function() {
-    var roundName=prompt("Please enter the round's name");
-    
-    if(roundName == null) return;
-    
-    $scoreTable.find('thead tr').append('<th>'+roundName+'</th>');
-    
-    $scoreTable.find('tbody tr').each(function () {
-      $(this).append('<td>0</td>');
-    });
-
-    teamTableTouched();
-  });
-  
-  $('#roundScoreBoard').click(function() {
-  
-    
-    /*
-    var popup = open("", "Popup", "width=1000,height=500,resizeable");
-    var html = '<html><link rel="stylesheet" href="main.css" /><body id="roundScoresPopup"><table id="roundScoresTable"></table></body></html>';
-    popup.document.body.innerhtml = '';
-    popup.document.open();
-    popup.document.write(html);
-    popup.document.close();
-    
-    var $popup = $("body", popup.document);
-    
-    
-    $popup.find('#roundScoresTable').html("LOL");*/
-  })
-  
-  ////////////// Event Handlers ////////////
-  function resetScoreTable() {
-    $('#scoreTable').html($('#emptyScoreTable').html());
-    $('#scoreTable').show();
-    tableDelete('teams');
-    teamTableTouched();
-  }
-   
-  // The team table has probably been modified
-  function teamTableTouched() {
-    tableSave('teams', $('#scoreTable'));
-    updateScoreTableIfTableChanged();
-  }
-  
-  // Only update if the data has changed  
-  function updateScoreTableIfTableChanged() {
-    $table = $('#scoreTable');
-    if($table.data('oldVal') != $table.text()) {
-        $table.data('oldVal', $table.text());
-
-        // Update the score table
-        updateLiveScores();
-    }
-  }
-    
-  ////////////// Store Tables in Local Storage ///////////////
-  function tableSave(name, $tableToSave) {
-    if (typeof(localStorage) == 'undefined' ) {
-    	alert('Your browser does not support HTML5 localStorage. Please upgrade');
-    } else {
-    	try {
-    		localStorage.setItem(tableGetStorageName(name), $tableToSave.html()); //saves to the database, "key", "value"
-    		console.log('Saved '+name+' to storage');
-    	} catch (e) {
-    	 	 if (e == QUOTA_EXCEEDED_ERR) {
-    	 	 	 alert('Quota exceeded, failed to save table, data will be lost on page reload!');
-    	 	 }
-    	}
-    }
-  }
-  
-  function tableGetStorageName(name) {
-    return "table" + name;
-  }
-  
-  function tableSaved(name) {
-    return localStorage.getItem(tableGetStorageName(name)) != null;
-  }
-  
-  function tableLoad(name, $tableToLoadInto) {
-      if(tableSaved(name))
-        $tableToLoadInto.html(localStorage.getItem(tableGetStorageName(name)));
-      else
-        alert("Error: No table named "+name+", has been saved!");
-  }
-  
-  function tableDelete(name) {
-    localStorage.removeItem(tableGetStorageName(name));
-  }
-  
-  var updating = false;
-  var updateNeeded = false;
-  function updateLiveScores() {
-  
-    // If we're already updating mark that an update is needed
-    if(updating) {
-      updateNeeded = true;
-      console.log("We're already updating, doing nothing");
-      return;
-    } else {
-      console.log('Updating the live scores');
-      updating = true;
-    }
-    
-    // Clone the table and empty the clone
-    var $currentTable = $('#liveScores');
-    var $newTable = $currentTable.clone();
-    $newTable.hide();
-    $('#demo').append($newTable);
-    $tbody = $newTable.find('tbody');
-    $tbody.empty();
-    
-    // Create our new table
-    $('#scoreTable tbody tr').each(function() {
-      $row = $(this);
-      
-      var teamName = null;
-      var totalScore = 0;
-      $row.find('td').each(function () {
-        if(teamName == null) teamName = $(this).text();
-        else totalScore += parseInt($(this).text());
-      });
-      
-      $tbody.append('<tr><td>?</td><td>'+teamName+'</td><td>'+totalScore+'</td></tr>');
-    })
-    
-    //////
-    sortTable($newTable);
-    $currentTable.rankingTableUpdate($newTable, {
-      onComplete: function(){
-        console.log("Complete");
-        updating = false;
-        if(updateNeeded) {
-          updateNeeded = false;
-          updateLiveScores();
-        }
-      }
-    });
-  }
-  
-  function isNumber(n) {
-      return !isNaN(parseFloat(n)) && isFinite(n);
-  }
-  
-  function compareCells(a, b) {
-      var b = $.text([b]);
-      var a = $.text([a]);
-
-      if (isNumber(a) && isNumber(b)) {
-          return parseInt(b) - parseInt(a);
-      } else {
-          return a.localeCompare(b);
-      }
-  }
-  
-  // Take a table and order it by the column with anim:sort
-  function sortTable(table) {
-  
-    //What column are we ordering on?
-    var sortIndex = table.find(".anim\\:sort").index();
-    
-    //Old table order
-    var idIndex = table.find(".anim\\:id").index();
-    var startList = table.find('td').filter(function() {
-      return $(this).index() === idIndex;
-    });
-    
-    //Sort the list
-    table.find('td').filter(function() {
-        return $(this).index() === sortIndex;
-    }).sortElements(compareCells, function() { // parentNode is the row we want to move
-        return this.parentNode;
-    });
-
-    //New table order
-    var idIndex = table.find(".anim\\:id").index();
-    var endList = table.find('td').filter(function() {
-        return $(this).index() === idIndex;
-    });
-  }
-
-});
-
-
-
-</script>
 </body>
 </html>
