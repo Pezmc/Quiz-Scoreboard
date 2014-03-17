@@ -2,17 +2,20 @@ var colors = require('colors');
 
 // Very basic info/debug/error messages
 exports.error = function(message, data) {
-  var message = "[ERROR]\t".red + message;
-  if(typeof data != undefined)
-    console.log(message, data);
-  else
-    console.log(message);
+  printMessage("[ERROR]\t".red + message, data);
 }
 
 exports.info = function(message, data) {
-  var message = "[INFO]\t".cyan + message;
+  printMessage("[INFO]\t".cyan + message, data);
+}
+
+exports.debug = function(message, data) {
+  printMessage("[DEBUG]\t".green + message, data);
+}
+
+var printMessage = function(message, data) {
   if(typeof data != 'undefined')
     console.log(message, data);
   else
-    console.log(message);  
+    console.log(message); 
 }
