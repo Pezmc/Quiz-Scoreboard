@@ -32,11 +32,17 @@ exports.unsubscribe = function(channelID, socket) {
     log.error('Client ['+clientID+'] tried unsubscribe from an unknown channel "'+channelID+'".'); 
     return { error: "Unknown channel ID: " + channelID };
   }
-
+  
+  if(status == 0)
+    log.warn('Unable to unsubscribe ['+clientID+'] from "'+channelID+'" as they\'re not subscribed.');
+  else
+    log.info('Unsubscribed ['+clientID+'] from "'+channelID+'".');
 };
 
 exports.publish = function(channelID, data, fromSocket) {
   var fromSocketID = fromSocket.id;
+  
+  log.debug('Client ['+fromSocketID+'] sent the following to "'+channelID+'":', data);
   var status = pubSub.publish(channelID, fromSocketID, function(socket) {
     socket.emit('event', data);  
   });
