@@ -37,7 +37,7 @@ exports.unsubscribe = function(channelID, clientID) {
     return false;
   }
 
-  var index = channel.indexOf(socket.id);
+  var index = channel.indexOf(clientID);
 
   if(index != -1) {
     channel.splice(index, 1);
