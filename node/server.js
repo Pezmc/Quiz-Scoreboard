@@ -7,6 +7,11 @@ var pubSub = require('./SocketPublishSubscribe.js');
 // 0 - error, 1 - warn, 2 - info, 3 - debug
 io.set('log level', 2); 
 
+// Configure for production
+io.enable('browser client minification');  // send minified client
+io.enable('browser client etag');          // apply etag caching logic based on version number
+io.enable('browser client gzip');          // gzip the file
+
 // initial connection from a client. socket argument = client.
 io.sockets.on('connection', function (socket) {
 
