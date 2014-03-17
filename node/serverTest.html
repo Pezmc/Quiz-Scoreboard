@@ -1,0 +1,56 @@
+<html>
+<head>
+    <title>Testing Publish/Subscribe</title>
+    
+</head>
+<body>
+  Channel: <input type="text" id="channelID" /><br /><br />
+  Chat: <textarea id="chat" style="width:500px;height: 200px;"></textarea><br />
+  
+  
+  <form id="messageForm">
+  Message: <input type="text" id="message" />
+  </form>
+</body>
+<script>var address = "http://127.0.0.1:25565";</script>
+<script src="http://127.0.0.1:25565/socket.io/socket.io.js"></script>
+<script>
+  var socket = io.connect(address);
+  
+  socket.on('event', function(data) {
+    var value = document.getElementById('chat').value;
+    
+    document.getElementById('chat').value = value + data + "\n";
+  });
+  
+  document.getElementById('channelID').addEventListener('blur', function(e) {
+    var value = document.getElementById('channelID').value;
+    
+    console.log("Subscribe", value)
+    socket.emit('subscribe', { channel: value });
+  });
+  
+  document.getElementById('messageForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    var value = document.getElementById('message').value;
+    document.getElementById('message').value = "";
+    
+    var channel = document.getElementById('channelID').value;
+    
+    sendMessage(channel, value);
+  }, false);
+  
+  function sendMessage(channelID, message) {
+    socket.emit('publish', { channel: channelID, data: message }, function(data) {
+      console.log("Callback publish", data); 
+    });
+  }
+  
+  function subscribe(channelID) {
+    socket.emit('subscribe', { channel: channelID }), function(data) {
+      console.log("Callback subscribe", data);  
+    }
+  }
+</script>
+</html>
