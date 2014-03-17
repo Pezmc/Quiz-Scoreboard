@@ -1,0 +1,14 @@
+{
+  "name": "pegPubSub",
+  "version": "0.0.1",
+  "description": "Simple publish subscribe with channels",
+  "main": "server.js",
+  "dependencies": {
+    "colors": "~0.6.2",
+    "socket.io": "~0.9.16"
+  },
+  "scripts": {
+    "start": "node server.js"
+  },
+  "author": "Pez Cuckow"
+}
