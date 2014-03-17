@@ -61,7 +61,7 @@ function compareCells(a, b) {
     var a = $.text([a]);
 
     if (isNumber(a) && isNumber(b)) {
-        return parseInt(b) - parseInt(a);
+        return parseFloat(b) - parseFloat(a);
     } else {
         return a.localeCompare(b);
     }
