@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <html>
 <head>
-<title>Pub Quiz Scoreboard</title>
+<title>Live Score</title>
 <link rel="stylesheet" href="css/tables.css" />
 <link rel="stylesheet" type="text/css" href="css/style.css" title="style" />
 <link rel="shortcut icon" href="images/favicon.ico" />
@@ -12,14 +12,15 @@
     <div id="header">
       <div id="logo">
         <div id="logo_text">
-          <h1><a href="index.html">Pub<span class="logo_colour">Quiz</span></a></h1>
-          <h2>A simple scoreboard.</h2>
+          <h1><a href="index.html">Live<span class="logo_colour">Score</span></a></h1>
+          <h2>A simple, live updating scoreboard.</h2>
         </div>
       </div>
     </div>
     <div id="site_content">
       <div id="content">
         <h1>Teams</h1>
+        <p><i>To edit, just click on the field, then click somewhere else to save.</i></p>
         
         <!-- The table data where we store our data -->
         <table id="scoreTable">
@@ -32,21 +33,44 @@
         <a href="#" id="roundScoreBoard">Popup Scoreboard</a>        
         
         <h1>Live Scoreboard</h1>
+        <p><i>This updates any time you edit the above scoreboard.</i></p>
+        
         <div class="demo">
-        <table id="liveScores" cellspacing="5">
+          <table id="liveScores" cellspacing="5">
             <thead>
-                <tr>
-                    <th class="anim:update anim:number">Position</th>
-                    <th class="anim:id">Name</th>
-                    <th class="anim:update anim:sort anim:number">Score</th>
-                </tr>
+              <tr>
+                <th class="anim:update anim:number">Position</th>
+                <th class="anim:id">Name</th>
+                <th class="anim:update anim:sort anim:number">Score</th>
+              </tr>
             </thead>
             <tbody>
-                
+
             </tbody>
-        </table>
+          </table>
+        </div>
+        
+        <br /><br /><br />
+        <h4>Subscribe to/create update channel</h4>
+        <p>
+          <i>This allows other computers to update the scores.
+          <br />The host should "create" a channel, everyone else should subscribe.</i>
+        </p>
+        
+        <div id="subscribeCreate">
+          <form>
+            Server Address: <input type="text" id="serverAddress" placeholder="127.0.0.1:1234" /><br />
+            Channel Name: <input type="text" id="channelName" placeholder="any word" /><br /><br />
+              <input type="button" id="subscribe" value="Subscribe to Channel" /> <input type="button" id="create" value="Create New Channel" />
+
+            
+          </form>
+          <br /><br />
+          Console:
+          <div id="status" class="console">   </div>
         </div>
       </div>
+      
     </div>
     <div id="footer">
       Copyright &copy; Pez Cuckow
@@ -65,18 +89,18 @@
   </tbody>
 </table>
 </div>
-</body>
+</body>  
+
+  
+
 
 <!-- Our JS -->
-<script src="http://127.0.0.1:25565/socket.io/socket.io.js"></script>
 <script src="js/lib/jquery-1.7.2.min.js"></script>
 <script src="js/lib/animator.js"></script>
 <script src="js/lib/sorttables.js"></script>
 <script src="js/lib/rankingTableUpdate.js"></script>
+<script src="js/PubSubSocket.js"></script>
 <script src="js/tables.js"></script>
 <script src="js/scoreboard.js"></script>
 
-
-
-</body>
 </html>
