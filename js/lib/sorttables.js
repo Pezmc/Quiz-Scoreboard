@@ -5,8 +5,6 @@
     Array.prototype.msort = jQuery.fn.msort = msort;
 
     // the actual compare
-
-
     function msort(compare) {
         var length = this.length,
             middle = Math.floor(length / 2);
@@ -22,8 +20,6 @@
     }
 
     //merge two lists
-
-
     function merge(left, right, compare) {
         var result = [];
         while (left.length > 0 || right.length > 0) {

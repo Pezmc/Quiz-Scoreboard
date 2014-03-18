@@ -10,8 +10,8 @@
 $(function() {
 
   // Load the table from local storage
-  if(tableSaved('teams')) {
-    tableLoad('teams', $('#scoreTable'));
+  if($('#scoreTable').isSaved('teams')) {
+    $('#scoreTable').load('teams');
   } else {
     alert("No saved table to load!");
     return;
@@ -122,10 +122,10 @@ $(function() {
     }
     
     // Order the results table
-    sortTable($newTable);
+    $newTable.animatedSort();
     
     // Update the numbering
-    updateRank($newTable, 1, 3);
+    $newTable.updateRank();
     
     // Animate the swap from $oldTable to $newTable
     $oldTable.rankingTableUpdate($newTable, {

@@ -10,8 +10,8 @@
 $(function() {
 
   // If we have a saved table load it
-  if(tableSaved('teams')) {
-    tableLoad('teams', $('#scoreTable'));
+  if($('#scoreTable').isSaved('teams')) {
+    $('#scoreTable').load('teams');
   } else {
     resetScoreTable();
   }
@@ -106,7 +106,7 @@ $(function() {
    
   // The team table has probably been modified
   function teamTableTouched() {
-    tableSave('teams', $('#scoreTable'));
+    $('#scoreTable').save('teams');
     updateScoreTableIfTableChanged();
   }
   
@@ -159,8 +159,8 @@ $(function() {
     })
     
     // Sort and order the table
-    sortTable($newTable);
-    updateRank($newTable, 1, 3);
+    $newTable.animatedSort();
+    $newTable.updateRank();
     $currentTable.rankingTableUpdate($newTable, {
       onComplete: function(){
         console.log("Complete");
