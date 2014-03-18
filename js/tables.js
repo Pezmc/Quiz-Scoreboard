@@ -68,6 +68,7 @@ function compareCells(a, b) {
 }
 
 // Number each row, defaulting to the 1st column for position and 3rd for score
+// Assumes the rows are in order already
 function updateRank(table, index, scoreIndex) {
     var position = 1;
     if(!index) index = 1;
