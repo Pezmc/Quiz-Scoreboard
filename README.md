@@ -30,6 +30,6 @@ The following are features I would love to add:
 
  - Step Throuch Popup Scoreboard one at a time - only updating one team in reverse order for more suspense
  - Having a popup of the live scoreboard
- - Swap table.js functions so you could call `$('#table').save('teams')`, `$('#table').load('teams')` etc...
  - Replace the hacky and rushed CSS for the popup window
  - Encapsulate the different scoreboards -> `$('#live').liveScoreboard($dataTable)` etc...
+ - ~~Swap table.js functions so you could call `$('#table').save('teams')`, `$('#table').load('teams')`~~
