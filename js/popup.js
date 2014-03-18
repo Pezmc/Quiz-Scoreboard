@@ -124,8 +124,8 @@ $(function() {
     // Order the results table
     sortTable($newTable);
     
-    // Update the numbbering
-    updateRank($newTable, 1);
+    // Update the numbering
+    updateRank($newTable, 1, 3);
     
     // Animate the swap from $oldTable to $newTable
     $oldTable.rankingTableUpdate($newTable, {

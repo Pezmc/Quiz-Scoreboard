@@ -160,6 +160,7 @@ $(function() {
     
     // Sort and order the table
     sortTable($newTable);
+    updateRank($newTable, 1, 3);
     $currentTable.rankingTableUpdate($newTable, {
       onComplete: function(){
         console.log("Complete");

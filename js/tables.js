@@ -67,15 +67,33 @@ function compareCells(a, b) {
     }
 }
 
-// Number each row, defaulting to the 1st column
-function updateRank(table, index) {
+// Number each row, defaulting to the 1st column for position and 3rd for score
+function updateRank(table, index, scoreIndex) {
     var position = 1;
-    if (!index) index = 1;
+    if(!index) index = 1;
+    if(!scoreIndex) scoreIndex = 3; 
 
+    var previousTotalScore = null;
+    var skipCount = 0;
     $("tbody tr", table).each(function() {
         var cell = $("td:nth-child(" + index + ")", this);
-        if (parseInt(cell.text()) != position) cell.text(position); //only change if needed
-        position++;
+      
+        var totalScore = parseFloat($("td:nth-child(" + scoreIndex + ")", this).text());
+      
+        if(previousTotalScore == null) {
+          previousTotalScore = totalScore;
+        }
+      
+        // ensure teams with matching scores get the same position
+        if(totalScore != previousTotalScore) {
+          position += skipCount > 0 ? skipCount : 1;
+          previousTotalScore = totalScore;
+        } else {
+          skipCount++; 
+        }
+      
+        // only change if needed 
+        if (parseInt(cell.text()) != position) cell.text(position); 
     });
 }
 
