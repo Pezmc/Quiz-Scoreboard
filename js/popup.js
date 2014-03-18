@@ -49,11 +49,11 @@ $(function() {
       var round = 0;
       roundScores[item] = new Array();
       
-      // For every item in the row, where 0 is the team name...
+      // For every column in the row, 0 is the team name...
       $(this).find('td').each(function() {
         if(round == 0) roundScores[item][round] = $(this).text();
         else { 
-          score += parseInt($(this).text());
+          score += parseFloat($(this).text());
           roundScores[item][round] = score;
         }
         

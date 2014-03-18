@@ -152,7 +152,7 @@ $(function() {
       var totalScore = 0;
       $row.find('td').each(function () {
         if(teamName == null) teamName = $(this).text();
-        else totalScore += parseInt($(this).text());
+        else totalScore += parseFloat($(this).text());
       });
       
       $tbody.append('<tr><td>?</td><td>'+teamName+'</td><td>'+totalScore+'</td></tr>');
