@@ -7,11 +7,18 @@
  * Twitter: @Pezmc
  */
 
+/* Plan for pub/sub
+ * - Register to channel
+ * - On item event, update the score table and fire teamTableTouched()
+ * - On subscribe, send a push with all the data
+ */
+
 $(function() {
 
   // If we have a saved table load it
-  if($('#scoreTable').isSaved('teams')) {
-    $('#scoreTable').load('teams');
+  var $scoreTable = $('#scoreTable');
+  if($scoreTable.isSaved('teams')) {
+    $scoreTable.load('teams');
   } else {
     resetScoreTable();
   }
@@ -20,7 +27,6 @@ $(function() {
   teamTableTouched();
   
   // Allow the score table to be edited
-  var $scoreTable = $('#scoreTable');
   $scoreTable.attr("contenteditable","true");
   
   // On edit, throw an event
@@ -163,7 +169,6 @@ $(function() {
     $newTable.updateRank();
     $currentTable.rankingTableUpdate($newTable, {
       onComplete: function(){
-        console.log("Complete");
         updating = false;
         if(updateNeeded) {
           updateNeeded = false;
