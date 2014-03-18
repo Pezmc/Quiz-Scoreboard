@@ -15,6 +15,34 @@
 
 $(function() {
 
+  // Publish subscribe if loaded
+  if(window.io) {
+    var socket = io.connect("http://127.0.0.1:25565");
+    
+    var channelID = "bagelTest123";
+    
+    socket.emit('subscribe', { channel: channelID }), function(data) {
+      console.log("Callback subscribe", data); 
+      
+      // Send score table to server?
+    }
+    
+    socket.on('event', function(data) {
+      // Update the table with the pushed data
+      console.log('Received push', data);
+      
+      // Either data will be full table
+      // Or data will be single element
+    });
+    
+    socket.emit('publish', { channel: channelID, data: message }, function(data) {
+      // On any event change, push to everyone
+      console.log("Callback publish", data); 
+      
+      // 
+    });
+  }
+  
   // If we have a saved table load it
   var $scoreTable = $('#scoreTable');
   if($scoreTable.isSaved('teams')) {
