@@ -22,6 +22,8 @@ exports.subscribe = function(channelID, socket) {
     log.info('Client ['+clientID+'] tried to subscribe to "'+channelID+'" more than once, request ignored.');
   else
     log.info('Subscribed ['+clientID+'] to channel "'+channelID+'".');
+  
+  return { success: 'Subscribed to "'+channelID+'".' } 
 };
 
 exports.unsubscribe = function(channelID, socket) {

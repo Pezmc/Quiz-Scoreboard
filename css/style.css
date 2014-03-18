@@ -11,7 +11,7 @@ body
   color: #777;}
 
 p
-{ padding: 0 0 20px 0;
+{ padding: 0 0 10px 0;
   line-height: 1.7em;}
 
 img
@@ -20,10 +20,9 @@ img
 h1, h2, h3, h4, h5, h6 
 { font: normal 175% 'century gothic', arial, sans-serif;
   color: #43423F;
-  margin: 0 0 15px 0;
   padding: 15px 0 5px 0;}
 
-h2
+h2, h3
 { font: normal 175% 'century gothic', arial, sans-serif;
   color: #1293EE;}
 
@@ -139,3 +138,12 @@ a:hover
   border-top: 1px solid #D9D5CF;
   border-bottom: 1px solid #FFF;
   margin: 0 0 20px 0;}
+
+.console {
+  max-height:100px;
+  margin-top:3px;
+  overflow-y:scroll;
+  background-color:#eee;
+  border:1px grey solid;
+  padding: 5px;
+}

@@ -15,6 +15,11 @@
 
 $(function() {
 
+  var pushType = {
+      UPDATE: 0,
+      SENDUPDATE: 1
+  };
+  
   // If we have a saved table load it
   var $scoreTable = $('#scoreTable');
   if($scoreTable.isSaved('teams')) {
@@ -28,10 +33,38 @@ $(function() {
   
   // Allow the score table to be edited
   $scoreTable.attr("contenteditable","true");
-  
+
   // On edit, throw an event
   $scoreTable.blur(function() {
-    teamTableTouched($(this));
+    teamTableTouched(true);
+  });
+  
+  function pushSocketUpdate() {
+    if(_SOCKET) {
+      _SOCKET.push({ event: pushType.UPDATE, content: $scoreTable.html() }, function(data) {
+        logToStatus(data.success); 
+      });
+    } 
+  }
+  
+  var $subCreate = $("#subscribeCreate");
+  
+  $form = $subCreate.find("form");
+  
+  $statusArea = $subCreate.find("#status");
+  
+  $addressField = $form.find("#serverAddress");
+  $channelName = $form.find("#channelName");
+  $subscribe = $form.find("#subscribe");
+  $create = $form.find("#create");
+  
+  var _SOCKET = null;
+  var _HOST = false;
+  $subscribe.click(prepareSocket);
+  $create.click(function() {
+    logToStatus("We're the host, registering with server.");
+    _HOST = true;
+    prepareSocket();
   });
   
   // If we try to leave the page, throw a warning!
@@ -80,7 +113,7 @@ $(function() {
     }
         
     $scoreTable.find('tr:last').after('<tr><td>'+teamName+'</td>'+scoreTDs+'</tr>');
-    teamTableTouched();
+    teamTableTouched(true);
   });
   
   // Adding a round, just adds another column
@@ -95,7 +128,7 @@ $(function() {
       $(this).append('<td>0</td>');
     });
 
-    teamTableTouched();
+    teamTableTouched(true);
   });
   
   $('#roundScoreBoard').click(function() {
@@ -106,24 +139,30 @@ $(function() {
   function resetScoreTable() {
     $('#scoreTable').html($('#emptyScoreTable').html());
     $('#scoreTable').show();
-    tableDelete('teams');
-    teamTableTouched();
+    $('#scoretable').delete('teams');
+    teamTableTouched(true);
   }
    
   // The team table has probably been modified
-  function teamTableTouched() {
+  function teamTableTouched(needSocketUpdate) {
+    if(typeof needSocketUpdate === 'undefined') needSocketUpdate = false;
+    
     $('#scoreTable').save('teams');
-    updateScoreTableIfTableChanged();
+    updateScoreTableIfTableChanged(needSocketUpdate);
   }
   
   // Only update if the data has changed  
-  function updateScoreTableIfTableChanged() {
+  function updateScoreTableIfTableChanged(needSocketUpdate) {
     $table = $('#scoreTable');
     if($table.data('oldVal') != $table.text()) {
-        $table.data('oldVal', $table.text());
+      $table.data('oldVal', $table.text());
 
-        // Update the score table
-        updateLiveScores();
+      // Update the score table
+      updateLiveScores();
+
+      // Push the update to any clients
+      if(needSocketUpdate)
+        pushSocketUpdate();
     }
   }
    
@@ -175,6 +214,50 @@ $(function() {
           updateLiveScores();
         }
       }
+    });
+  }
+    
+  function logToStatus(message) {
+    console.log(message);
+    var now = new Date();
+    $statusArea.append(now.getHours()+":"+now.getMinutes() +":" +now.getSeconds() +"\t"+ message + "<br />")
+               .scrollTop($statusArea[0].scrollHeight);
+  }
+  
+  function prepareSocket() {
+    var address = $addressField.val();
+    var channelID = $channelName.val();
+    
+    _SOCKET = new PushSocket(address);
+    _SOCKET.connect(function() {
+      _SOCKET.subscribe(channelID, function(data) {
+        logToStatus("Successfully connected to "+channelID);
+        console.log(data);
+        
+        if(!_HOST) {
+          logToStatus("We're a subscriber, so requesting an update from the host.");
+          _SOCKET.push({event: pushType.SENDUPDATE}, function(data) {
+            logToStatus("Request sent to server, waiting for reply.");  
+          });
+        }
+      });
+      
+      _SOCKET.bindPush(function(data) {
+        
+        // If we're the HOST reply to the send update request
+        if(data.event == pushType.SENDUPDATE && _HOST) {       
+          // Reply with an update
+          logToStatus('Server requested an update from us.');
+          pushSocketUpdate();
+        }
+        else if(data.event == pushType.UPDATE) {
+          logToStatus('Received an update from the server');
+          $scoreTable.html(data.content);
+          teamTableTouched(false);
+        } else {
+          logToStatus('Received unknown event type from the server.') 
+        }
+      });
     });
   }
   

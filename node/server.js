@@ -19,8 +19,11 @@ io.sockets.on('connection', function (socket) {
   pubSub.register(socket);
   
   // subscribe to a channel
-  socket.on('subscribe', function(data) {
-    pubSub.subscribe(data.channel, socket);
+  socket.on('subscribe', function(data, callback) {
+    if(typeof callback === 'function')
+      callback(pubSub.subscribe(data.channel, socket));
+    else
+      pubSub.subscribe(data.channel, socket);
   });  
             
   // deregister from a channel
