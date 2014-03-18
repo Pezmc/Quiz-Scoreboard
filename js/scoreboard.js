@@ -67,13 +67,6 @@ $(function() {
     prepareSocket();
   });
   
-  function logToStatus(message) {
-    console.log(message);
-    var now = new Date();
-    $statusArea.append(now.getHours()+":"+now.getMinutes() +":" +now.getSeconds() +"\t"+ message + "<br />")
-               .scrollTop($statusArea[0].scrollHeight);
-  }
-  
   // If we try to leave the page, throw a warning!
   window.onbeforeunload = function() {
     return "If you leave you may lose all the scores!";
@@ -222,6 +215,13 @@ $(function() {
         }
       }
     });
+  }
+    
+  function logToStatus(message) {
+    console.log(message);
+    var now = new Date();
+    $statusArea.append(now.getHours()+":"+now.getMinutes() +":" +now.getSeconds() +"\t"+ message + "<br />")
+               .scrollTop($statusArea[0].scrollHeight);
   }
   
   function prepareSocket() {
