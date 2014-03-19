@@ -52,6 +52,7 @@ $(function() {
     } 
   }
   
+  $("#forceUpdateArea").hide();
   
   
 
@@ -253,6 +254,9 @@ $(function() {
         }
         $("#statusMessage").html('We\'re <b>'+(_HOST ? 'the host' : 'a subscriber')
                                   +'</b> connected to <b>'+channelID+'</b> on <b>'+address+'</b>.<br />');
+        $("#forceUpdateMessage").text(_HOST ? 'Send update to all clients.' : 'Request update from host, if one\'s connected.');
+        
+        hideSubscribeForm();
       });
       
       _SOCKET.bindPush(function(data) {
@@ -274,6 +278,11 @@ $(function() {
     });
   }
   
+  function hideSubscribeForm() {
+    $form.slideUp();
+    $("#forceUpdateArea").slideDown(); 
+    $("#statusArea").slideDown();
+  }
   function pad(n){
     return n<10? '0'+n:''+n;
   }
