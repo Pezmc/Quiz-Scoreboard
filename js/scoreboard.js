@@ -251,6 +251,8 @@ $(function() {
             logToStatus("Request sent to server, waiting for reply.");  
           });
         }
+        $("#statusMessage").html('We\'re <b>'+(_HOST ? 'the host' : 'a subscriber')
+                                  +'</b> connected to <b>'+channelID+'</b> on <b>'+address+'</b>.<br />');
       });
       
       _SOCKET.bindPush(function(data) {
