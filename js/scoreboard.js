@@ -224,7 +224,7 @@ $(function() {
    
     console.log(message);
     var now = new Date();
-    $statusArea.append(now.getHours()+":"+now.getMinutes() +":" +now.getSeconds() +"\t"+ message + "<br />")
+    $statusArea.append(pad(now.getHours())+":"+pad(now.getMinutes()) +":" +pad(now.getSeconds()) +"\t"+ message + "<br />")
                .scrollTop($statusArea[0].scrollHeight);
   }
   
@@ -270,6 +270,10 @@ $(function() {
         }
       });
     });
+  }
+  
+  function pad(n){
+    return n<10? '0'+n:''+n;
   }
   
 });
