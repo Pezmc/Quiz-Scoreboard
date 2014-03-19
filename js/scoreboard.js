@@ -30,31 +30,16 @@ $(function() {
   
   // Force a touch (to update the live scoreboard)
   teamTableTouched();
-  
-  // Allow the score table to be edited
-  $scoreTable.attr("contenteditable","true");
 
   // On edit, throw an event
-  $scoreTable.blur(function() {
-    teamTableTouched(true);
-  });
+  bindEditEvents($scoreTable);
   
-  function pushSocketUpdate() {
-    if(_SOCKET) {
-      _SOCKET.push({ event: pushType.UPDATE, content: $scoreTable.html() }, function(data) {
-        logToStatus(data.success); 
-      });
-    } 
-  }
+  $("#forceUpdateArea").hide();
+  $("#statusArea").hide();
+  $("#forceUpdate").click(requestOrPushUpdate);
   
   var $subCreate = $("#subscribeCreate");
-  
   $form = $subCreate.find("form");
-  
-  $statusArea = $subCreate.find("#status");
-  
-  $addressField = $form.find("#serverAddress");
-  $channelName = $form.find("#channelName");
   $subscribe = $form.find("#subscribe");
   $create = $form.find("#create");
   
@@ -114,6 +99,7 @@ $(function() {
         
     $scoreTable.find('tr:last').after('<tr><td>'+teamName+'</td>'+scoreTDs+'</tr>');
     teamTableTouched(true);
+    bindEditEvents($scoreTable);
   });
   
   // Adding a round, just adds another column
@@ -129,6 +115,7 @@ $(function() {
     });
 
     teamTableTouched(true);
+    bindEditEvents($scoreTable);
   });
   
   $('#roundScoreBoard').click(function() {
@@ -137,23 +124,24 @@ $(function() {
   
   ////////////// Event Handlers ////////////
   function resetScoreTable() {
-    $('#scoreTable').html($('#emptyScoreTable').html());
-    $('#scoreTable').show();
-    $('#scoretable').delete('teams');
+    $scoreTable.html($('#emptyScoreTable').html());
+    $scoreTable.show();
+    $scoreTable.delete('teams');
     teamTableTouched(true);
+    bindEditEvents($scoreTable);
   }
    
   // The team table has probably been modified
   function teamTableTouched(needSocketUpdate) {
     if(typeof needSocketUpdate === 'undefined') needSocketUpdate = false;
     
-    $('#scoreTable').save('teams');
+    $scoreTable.save('teams');
     updateScoreTableIfTableChanged(needSocketUpdate);
   }
   
   // Only update if the data has changed  
   function updateScoreTableIfTableChanged(needSocketUpdate) {
-    $table = $('#scoreTable');
+    $table = $scoreTable;
     if($table.data('oldVal') != $table.text()) {
       $table.data('oldVal', $table.text());
 
@@ -216,30 +204,60 @@ $(function() {
       }
     });
   }
+  
+  function bindEditEvents($table) {
+    $table.find("td, th").each(function(){
+      $(this).attr("contenteditable","true");
+      $(this).off('blur').blur(function() {
+        teamTableTouched(true);
+      });
+    });
+  }
+  
+  function pushSocketUpdate() {
+    if(_SOCKET) {
+      _SOCKET.push({ event: pushType.UPDATE, content: $scoreTable.html() }, function(data) {
+        logToStatus(data.success); 
+      });
+    } 
+  }
     
+  var $statusArea = null;
   function logToStatus(message) {
+    if(!$statusArea) {
+      var $subCreate = $("#subscribeCreate");   
+      $statusArea = $subCreate.find("#status");
+    }
+   
     console.log(message);
     var now = new Date();
-    $statusArea.append(now.getHours()+":"+now.getMinutes() +":" +now.getSeconds() +"\t"+ message + "<br />")
+    $statusArea.append(pad(now.getHours())+":"+pad(now.getMinutes()) +":" +pad(now.getSeconds()) +"\t"+ message + "<br />")
                .scrollTop($statusArea[0].scrollHeight);
   }
   
   function prepareSocket() {
+    $addressField = $form.find("#serverAddress");
+    $channelName = $form.find("#channelName");
+    
     var address = $addressField.val();
     var channelID = $channelName.val();
     
     _SOCKET = new PushSocket(address);
     _SOCKET.connect(function() {
       _SOCKET.subscribe(channelID, function(data) {
-        logToStatus("Successfully connected to "+channelID);
+        logToStatus('Successfully connected to "'+channelID+'" on "'+address+'".');
+        if(_HOST) logToStatus('Share the channel and server address with any subscribers');
         console.log(data);
         
-        if(!_HOST) {
-          logToStatus("We're a subscriber, so requesting an update from the host.");
-          _SOCKET.push({event: pushType.SENDUPDATE}, function(data) {
-            logToStatus("Request sent to server, waiting for reply.");  
-          });
-        }
+        if(!_HOST)
+          requestSocketUpdate();
+        
+        $("#statusMessage").html('We\'re <b>'+(_HOST ? 'the host' : 'a subscriber')
+                                  +'</b> connected to <b>'+channelID+'</b> on <b>'+address+'</b>.<br />');
+        
+        $("#forceUpdateMessage").text(_HOST ? 'Send update to all clients.' : 'Request update from host, if one\'s connected.');
+        
+        hideSubscribeForm();
       });
       
       _SOCKET.bindPush(function(data) {
@@ -254,11 +272,53 @@ $(function() {
           logToStatus('Received an update from the server');
           $scoreTable.html(data.content);
           teamTableTouched(false);
+          bindEditEvents($scoreTable);
         } else {
           logToStatus('Received unknown event type from the server.') 
         }
       });
+      
+      _SOCKET.bindEvent('connect', function() {
+        logToStatus('Connected to the server '+address+'.');  
+      });
+
+      _SOCKET.bindEvent('disconnect', function() {
+        logToStatus('Disconnected from the server, check your internet.');  
+      });
+      
+      _SOCKET.bindEvent('connect_failed', function() {
+        logToStatus('Failed to connect to '+address+'.')
+      });
+      
+      _SOCKET.bindEvent('reconnecting', function() {
+        logToStatus('Attempting to reconnect to '+address+', check your internet connection.')
+      });
+       
     });
+  }
+  
+  function requestSocketUpdate() {
+    logToStatus("We're a subscriber, so requesting an update from the host.");
+    _SOCKET.push({event: pushType.SENDUPDATE}, function(data) {
+      logToStatus("Request sent to server, waiting for reply.");  
+    });
+  }
+  
+  function requestOrPushUpdate() {
+    if(_HOST)
+      pushSocketUpdate();
+    else
+      requestSocketUpdate();
+  }
+  
+  function hideSubscribeForm() {
+    $form.slideUp();
+    $("#forceUpdateArea").slideDown(); 
+    $("#statusArea").slideDown();
+  }
+  
+  function pad(n){
+    return n<10? '0'+n:''+n;
   }
   
 });
