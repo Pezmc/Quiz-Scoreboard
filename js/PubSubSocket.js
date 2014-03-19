@@ -42,6 +42,10 @@ function PushSocket(address) {
     _socket.on('event', callback);
   }
   
+  this.bindEvent = function(eventName, callback) {
+    _socket.on(eventName, callback); 
+  }
+  
   this.push = function(data, callback) {
     _socket.emit('publish', { channel: _channelID, data: data }, callback);
   }
