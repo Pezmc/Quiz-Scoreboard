@@ -242,6 +242,8 @@ $(function() {
     var address = $addressField.val();
     var channelID = $channelName.val();
     
+    hideSubscribeForm();
+    
     _SOCKET = new PushSocket(address);
     _SOCKET.connect(function() {
       _SOCKET.subscribe(channelID, function(data) {
@@ -257,7 +259,7 @@ $(function() {
         
         $("#forceUpdateMessage").text(_HOST ? 'Send update to all clients.' : 'Request update from host, if one\'s connected.');
         
-        hideSubscribeForm();
+        
       });
       
       _SOCKET.bindPush(function(data) {
