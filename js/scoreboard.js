@@ -54,6 +54,7 @@ $(function() {
   bindEditEvents($scoreTable);
   
   $("#forceUpdateArea").hide();
+  $("#forceUpdate").click(requestOrPushUpdate);
   
   
 
@@ -307,6 +308,20 @@ $(function() {
       });
        
     });
+  }
+  
+  function requestSocketUpdate() {
+    logToStatus("We're a subscriber, so requesting an update from the host.");
+    _SOCKET.push({event: pushType.SENDUPDATE}, function(data) {
+      logToStatus("Request sent to server, waiting for reply.");  
+    });
+  }
+  
+  function requestOrPushUpdate() {
+    if(_HOST)
+      pushSocketUpdate();
+    else
+      requestSocketUpdate();
   }
   
   function hideSubscribeForm() {
