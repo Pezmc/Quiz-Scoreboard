@@ -30,27 +30,18 @@ $(function() {
   
   // Force a touch (to update the live scoreboard)
   teamTableTouched();
-  
-  // Allow the score table to be edited
-  //$scoreTable.attr("contenteditable","true");
 
   // On edit, throw an event
-  $scoreTable.find("td, th").each(function(){
-    $(this).attr("contenteditable","true");
-    $(this).blur(function() {
-      teamTableTouched(true);
-    });
-  });
-  
-  $("#forceUpdate").click(pushSocketUpdate);
-  
   bindEditEvents($scoreTable);
   
   $("#forceUpdateArea").hide();
+  $("#statusArea").hide();
   $("#forceUpdate").click(requestOrPushUpdate);
   
-  
-
+  var $subCreate = $("#subscribeCreate");
+  $form = $subCreate.find("form");
+  $subscribe = $form.find("#subscribe");
+  $create = $form.find("#create");
   
   var _SOCKET = null;
   var _HOST = false;
@@ -133,9 +124,9 @@ $(function() {
   
   ////////////// Event Handlers ////////////
   function resetScoreTable() {
-    $('#scoreTable').html($('#emptyScoreTable').html());
-    $('#scoreTable').show();
-    $('#scoretable').delete('teams');
+    $scoreTable.html($('#emptyScoreTable').html());
+    $scoreTable.show();
+    $scoreTable.delete('teams');
     teamTableTouched(true);
     bindEditEvents($scoreTable);
   }
@@ -144,13 +135,13 @@ $(function() {
   function teamTableTouched(needSocketUpdate) {
     if(typeof needSocketUpdate === 'undefined') needSocketUpdate = false;
     
-    $('#scoreTable').save('teams');
+    $scoreTable.save('teams');
     updateScoreTableIfTableChanged(needSocketUpdate);
   }
   
   // Only update if the data has changed  
   function updateScoreTableIfTableChanged(needSocketUpdate) {
-    $table = $('#scoreTable');
+    $table = $scoreTable;
     if($table.data('oldVal') != $table.text()) {
       $table.data('oldVal', $table.text());
 
@@ -245,12 +236,8 @@ $(function() {
   }
   
   function prepareSocket() {
-    var $subCreate = $("#subscribeCreate");
-    $form = $subCreate.find("form");
     $addressField = $form.find("#serverAddress");
     $channelName = $form.find("#channelName");
-    $subscribe = $form.find("#subscribe");
-    $create = $form.find("#create");
     
     var address = $addressField.val();
     var channelID = $channelName.val();
@@ -258,17 +245,16 @@ $(function() {
     _SOCKET = new PushSocket(address);
     _SOCKET.connect(function() {
       _SOCKET.subscribe(channelID, function(data) {
-        logToStatus("Successfully connected to "+channelID);
+        logToStatus('Successfully connected to "'+channelID+'" on "'+address+'".');
+        if(_HOST) logToStatus('Share the channel and server address with any subscribers');
         console.log(data);
         
-        if(!_HOST) {
-          logToStatus("We're a subscriber, so requesting an update from the host.");
-          _SOCKET.push({event: pushType.SENDUPDATE}, function(data) {
-            logToStatus("Request sent to server, waiting for reply.");  
-          });
-        }
+        if(!_HOST)
+          requestSocketUpdate();
+        
         $("#statusMessage").html('We\'re <b>'+(_HOST ? 'the host' : 'a subscriber')
                                   +'</b> connected to <b>'+channelID+'</b> on <b>'+address+'</b>.<br />');
+        
         $("#forceUpdateMessage").text(_HOST ? 'Send update to all clients.' : 'Request update from host, if one\'s connected.');
         
         hideSubscribeForm();
@@ -330,6 +316,7 @@ $(function() {
     $("#forceUpdateArea").slideDown(); 
     $("#statusArea").slideDown();
   }
+  
   function pad(n){
     return n<10? '0'+n:''+n;
   }
