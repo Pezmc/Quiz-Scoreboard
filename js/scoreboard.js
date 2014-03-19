@@ -39,6 +39,8 @@ $(function() {
     teamTableTouched(true);
   });
   
+  $("#forceUpdate").click(pushSocketUpdate);
+  
   function pushSocketUpdate() {
     if(_SOCKET) {
       _SOCKET.push({ event: pushType.UPDATE, content: $scoreTable.html() }, function(data) {
@@ -47,16 +49,9 @@ $(function() {
     } 
   }
   
-  var $subCreate = $("#subscribeCreate");
   
-  $form = $subCreate.find("form");
   
-  $statusArea = $subCreate.find("#status");
-  
-  $addressField = $form.find("#serverAddress");
-  $channelName = $form.find("#channelName");
-  $subscribe = $form.find("#subscribe");
-  $create = $form.find("#create");
+
   
   var _SOCKET = null;
   var _HOST = false;
@@ -217,7 +212,13 @@ $(function() {
     });
   }
     
+  var $statusArea = null;
   function logToStatus(message) {
+    if(!$statusArea) {
+      var $subCreate = $("#subscribeCreate");   
+      $statusArea = $subCreate.find("#status");
+    }
+   
     console.log(message);
     var now = new Date();
     $statusArea.append(now.getHours()+":"+now.getMinutes() +":" +now.getSeconds() +"\t"+ message + "<br />")
@@ -225,6 +226,13 @@ $(function() {
   }
   
   function prepareSocket() {
+    var $subCreate = $("#subscribeCreate");
+    $form = $subCreate.find("form");
+    $addressField = $form.find("#serverAddress");
+    $channelName = $form.find("#channelName");
+    $subscribe = $form.find("#subscribe");
+    $create = $form.find("#create");
+    
     var address = $addressField.val();
     var channelID = $channelName.val();
     
