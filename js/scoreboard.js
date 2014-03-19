@@ -32,11 +32,14 @@ $(function() {
   teamTableTouched();
   
   // Allow the score table to be edited
-  $scoreTable.attr("contenteditable","true");
+  //$scoreTable.attr("contenteditable","true");
 
   // On edit, throw an event
-  $scoreTable.blur(function() {
-    teamTableTouched(true);
+  $scoreTable.find("td, th").each(function(){
+    $(this).attr("contenteditable","true");
+    $(this).blur(function() {
+      teamTableTouched(true);
+    });
   });
   
   $("#forceUpdate").click(pushSocketUpdate);
