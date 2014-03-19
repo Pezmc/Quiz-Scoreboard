@@ -44,13 +44,6 @@ $(function() {
   
   $("#forceUpdate").click(pushSocketUpdate);
   
-  function pushSocketUpdate() {
-    if(_SOCKET) {
-      _SOCKET.push({ event: pushType.UPDATE, content: $scoreTable.html() }, function(data) {
-        logToStatus(data.success); 
-      });
-    } 
-  }
   bindEditEvents($scoreTable);
   
   $("#forceUpdateArea").hide();
@@ -228,6 +221,14 @@ $(function() {
         teamTableTouched(true);
       });
     });
+  }
+  
+  function pushSocketUpdate() {
+    if(_SOCKET) {
+      _SOCKET.push({ event: pushType.UPDATE, content: $scoreTable.html() }, function(data) {
+        logToStatus(data.success); 
+      });
+    } 
   }
     
   var $statusArea = null;
