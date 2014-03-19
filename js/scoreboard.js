@@ -289,6 +289,23 @@ $(function() {
           logToStatus('Received unknown event type from the server.') 
         }
       });
+      
+      _SOCKET.bindEvent('connect', function() {
+        logToStatus('Connected to the server '+address+'.');  
+      });
+
+      _SOCKET.bindEvent('disconnect', function() {
+        logToStatus('Disconnected from the server, check your internet.');  
+      });
+      
+      _SOCKET.bindEvent('connect_failed', function() {
+        logToStatus('Failed to connect to '+address+'.')
+      });
+      
+      _SOCKET.bindEvent('reconnecting', function() {
+        logToStatus('Attempting to reconnect to '+address+', check your internet connection.')
+      });
+       
     });
   }
   
