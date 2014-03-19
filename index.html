@@ -53,7 +53,8 @@
         <br /><br /><br />
         <h4>Subscribe to/create update channel</h4>
         <p>
-          <i>This allows other computers to update the scores.
+          <i>This allows other computers to update the scores.<br />
+          Server address is the location of your node server, try server.pezcuckow.com:25565 for a demo
           <br />The host should "create" a channel, everyone else should subscribe.</i>
         </p>
         
@@ -65,7 +66,9 @@
               <input type="button" id="create" value="Create New Channel" />
 
             
-          </form>
+          </form><br />
+          <a href="#" id="forceUpdate">Force Update</a>
+          <i>If client request update from host. If host, send update to all clients.</i>
           <br /><br />
           Console:
           <div id="status" class="console">   </div>
@@ -85,7 +88,6 @@
   </thead>
   <tbody>
     <tr>
-      <td>Pez</td>
     </tr>
   </tbody>
 </table>
