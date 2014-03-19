@@ -287,11 +287,15 @@ $(function() {
       });
       
       _SOCKET.bindEvent('connect_failed', function() {
+<<<<<<< HEAD
         logToStatus('Failed to connect to '+address+'.');
       });
       
       _SOCKET.bindEvent('reconnecting', function() {
         logToStatus('Attempting to reconnect to '+address+'.');
+=======
+        logToStatus('Failed to connect to '+address+'.')
+>>>>>>> FETCH_HEAD
       });
       
       _SOCKET.bindEvent('reconnecting', function() {
