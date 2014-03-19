@@ -51,6 +51,7 @@ $(function() {
       });
     } 
   }
+  bindEditEvents($scoreTable);
   
   $("#forceUpdateArea").hide();
   
@@ -113,6 +114,7 @@ $(function() {
         
     $scoreTable.find('tr:last').after('<tr><td>'+teamName+'</td>'+scoreTDs+'</tr>');
     teamTableTouched(true);
+    bindEditEvents($scoreTable);
   });
   
   // Adding a round, just adds another column
@@ -128,6 +130,7 @@ $(function() {
     });
 
     teamTableTouched(true);
+    bindEditEvents($scoreTable);
   });
   
   $('#roundScoreBoard').click(function() {
@@ -140,6 +143,7 @@ $(function() {
     $('#scoreTable').show();
     $('#scoretable').delete('teams');
     teamTableTouched(true);
+    bindEditEvents($scoreTable);
   }
    
   // The team table has probably been modified
@@ -215,6 +219,15 @@ $(function() {
       }
     });
   }
+  
+  function bindEditEvents($table) {
+    $table.find("td, th").each(function(){
+      $(this).attr("contenteditable","true");
+      $(this).off('blur').blur(function() {
+        teamTableTouched(true);
+      });
+    });
+  }
     
   var $statusArea = null;
   function logToStatus(message) {
@@ -271,6 +284,7 @@ $(function() {
           logToStatus('Received an update from the server');
           $scoreTable.html(data.content);
           teamTableTouched(false);
+          bindEditEvents($scoreTable);
         } else {
           logToStatus('Received unknown event type from the server.') 
         }
