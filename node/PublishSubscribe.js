@@ -19,14 +19,17 @@ exports.remove = function(clientID) {
       
 exports.subscribe = function(channelID, clientID) {
 
-  if(typeof channels[channelID] == 'undefined')
+  var channel = exports.getChannel(channelID);
+  if(!channel) {
     channels[channelID] = [];
+    channel = channels[channelID];
+  }
 
-  if(channels[channelID].indexOf(clientID) != -1) {
+  if(channel.indexOf(clientID) != -1) {
     return false;
   }
 
-  channels[channelID].push(clientID);
+  channel.push(clientID);
   
   return true;
 };
@@ -76,6 +79,22 @@ exports.getClientCount = function() {
            
 exports.getChannelCount = function() {
   return objectLength(channels);
+};
+
+exports.getClientCountInChannel = function(channelName) {
+  if(exports.getChannel(channelName))
+    return channelName.length;
+  
+  return 0;
+};
+
+exports.getChannel = function(channelName) {
+  var channel = channels[channelName];
+  if(typeof channel == 'undefined') {
+    return false;
+  }
+  
+  return channel;
 };
 
 // Count object attributes

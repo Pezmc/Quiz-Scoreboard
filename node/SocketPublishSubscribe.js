@@ -23,7 +23,7 @@ exports.subscribe = function(channelID, socket) {
   else
     log.info('Subscribed ['+clientID+'] to channel "'+channelID+'".');
   
-  return { success: 'Subscribed to "'+channelID+'".' } 
+  return { success: 'Subscribed to "'+channelID+'", there are "'+pubSub.getChannelCount(channelID)+'" people in this channel.' } 
 };
 
 exports.unsubscribe = function(channelID, socket) {

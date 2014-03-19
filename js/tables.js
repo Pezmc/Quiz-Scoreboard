@@ -117,8 +117,6 @@
         var previousTotalScore = null;
         var skipCount = 0;
         
-        console.log(index, scoreIndex);
-        
         $("tbody tr", table).each(function() {
             var cell = $("td:nth-child(" + index + ")", this);
             var totalScore = parseFloat($("td:nth-child(" + scoreIndex + ")", this).text());
