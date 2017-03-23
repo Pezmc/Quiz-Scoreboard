@@ -111,35 +111,28 @@
         var scoreIndex = table.find(".anim\\:sort").index();
         if(scoreIndex < 0) scoreIndex = 3; 
         else scoreIndex++;
-          
-        var position = 1;
+
+        var position = 0;
 
         var previousTotalScore = null;
-        var skipCount = 0;
-        
+        var skippedRows = 0;
+
         $("tbody tr", table).each(function() {
             var cell = $("td:nth-child(" + index + ")", this);
             var totalScore = parseFloat($("td:nth-child(" + scoreIndex + ")", this).text());
 
-            if(previousTotalScore == null) {
-              previousTotalScore = totalScore;
-            }
-
             // ensure teams with matching scores get the same position
             if(totalScore != previousTotalScore) {
-              position += skipCount > 0 ? skipCount : 1;
+              position += 1 + skippedRows;
               previousTotalScore = totalScore;
-              skipCount = 0;
+              skippedRows = 0;
             } else {
-              skipCount++; 
+              skippedRows++;
             }
 
-            // only change if needed 
-            if (parseInt(cell.text()) != position) cell.text(position); 
+            // only change if needed
+            if (parseInt(cell.text()) != position) cell.text(position);
         });
       }
-      
-  
-        
     });
 })(jQuery);
