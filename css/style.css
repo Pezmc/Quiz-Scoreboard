@@ -17,7 +17,7 @@ p
 img
 { border: 0;}
 
-h1, h2, h3, h4, h5, h6 
+h1, h2, h3, h4, h5, h6
 { font: normal 175% 'century gothic', arial, sans-serif;
   color: #43423F;
   padding: 15px 0 5px 0;}
@@ -48,23 +48,41 @@ a, a:hover
 a:hover
 { text-decoration: none;}
 
-.left
-{ float: left;
-  width: auto;
-  margin-right: 10px;}
-
-.right
-{ float: right; 
-  width: auto;
-  margin-left: 10px;}
-
-.center
-{ display: block;
+h2
+{
+  display: block;
   text-align: center;
   margin: 20px auto;}
 
+.buttons {
+  margin: 5px auto;
+  user-select: none;
+}
+
+.buttons .left
+{ float: left;
+  width: 24px;
+  min-height: 1px}
+
+.buttons .right
+{ float: right;
+  width: 72px;}
+
+.buttons .right a
+{
+  margin-left: 10px;}
+
+.buttons a
+{
+  cursor: pointer;
+  color: #0f7bc7;
+  text-decoration: none;}
+
+.buttons a:hover {
+  color: #0a5082;}
+
 #main, #logo, #menubar, #site_content, #footer
-{ margin-left: auto; 
+{ margin-left: auto;
   margin-right: auto;}
 
 #header
@@ -76,8 +94,8 @@ a:hover
   position: relative;
   height: 50px;}
 
-#logo #logo_text 
-{ position: absolute; 
+#logo #logo_text
+{ position: absolute;
   top: 5px;
   left: 0;}
 
@@ -87,7 +105,7 @@ a:hover
   text-transform: none;
   margin: 0;}
 
-#logo_text h1, #logo_text h1 a, #logo_text h1 a:hover 
+#logo_text h1, #logo_text h1 a, #logo_text h1 a:hover
 { padding: 5px 0 0 0;
   color: #FFF;
   letter-spacing: 0.1em;
@@ -106,7 +124,7 @@ a:hover
   overflow: hidden;
   margin: 0 auto 0 auto;
   padding: 20px 24px 20px 37px;
-  background: #FFF;} 
+  background: #FFF;}
 
 #content
 { text-align: left;
@@ -118,7 +136,7 @@ a:hover
   font: normal 100% 'lucida sans unicode', arial, sans-serif;
   height: 33px;
   padding: 24px 0 5px 0;
-  text-align: center; 
+  text-align: center;
   background: #1293EE;
   color: #FFF;
   text-transform: uppercase;

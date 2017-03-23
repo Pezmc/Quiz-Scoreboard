@@ -9,17 +9,20 @@
 
 $(function() {
 
-  // Load the table from local storage
-  if($('#scoreTable').isSaved('teams')) {
-    $('#scoreTable').load('teams');
-  } else {
-    alert("No saved table to load!");
-    return;
-  }
-
   // Deault to the first round
   var currentRound = 0;
+  loadData();
   displayRound($('#roundScoresPopup'), 1);
+
+  // Load the table from local storage
+  function loadData() {
+    if($('#scoreTable').isSaved('teams')) {
+      $('#scoreTable').load('teams');
+    } else {
+      alert("No saved table to load!");
+      return;
+    }
+  }
 
   // Grab the round names from the stored table
   function getRoundNames() {
@@ -35,7 +38,6 @@ $(function() {
 
     return roundNames;
   }
-
 
   // Grab the round scores from the stored table
   function getRoundScores() {
@@ -69,7 +71,6 @@ $(function() {
   }
 
   // Display round id in $body
-  var roundUpdateNeeded = false;
   var roundUpdating = false;
   function displayRound($body, roundID) {
 
@@ -77,7 +78,6 @@ $(function() {
 
     // Prevent displaying more than one round at once
     if(roundUpdating) {
-      //roundUpdateNeeded = true;
       return;
     }
     roundUpdating = true;
@@ -121,6 +121,12 @@ $(function() {
     } else {
       $body.find("#roundBackward").hide();
     }
+
+    // Bind refesh to show this rounds data
+    $body.find("#reloadRound").unbind('click').click(function() {
+      loadData();
+      displayRound($('#roundScoresPopup'), roundID);
+    });
 
     // Order the results table
     $newTable.animatedSort();

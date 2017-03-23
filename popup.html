@@ -9,13 +9,23 @@
 
 <body id="roundScoresPopup" style="position:relative">
 
-  <center><h2 id="roundScoresTitle">Name</h2></center>
   <div class="buttons">
-    <img src="images/back_button.jpeg" id="roundBackward" style="float:left"; />
-    <img src="images/forward_button.jpeg" id="roundForward" style="float:right" />
+    <div class="left">
+      <a id="roundBackward" title="Previous Round">&larr;</a>
+    </div>
+
+    <div class="right">
+      <a id="reloadRound" title="Reload Round(s)">&#x21bb;</a>
+      <a id="roundForward" title="Next Round">&rarr;</a>
+    </div>
   </div>
+
+  <div>
+    <h2 id="roundScoresTitle">Name</h2>
+  </div>
+
   <br />
-  
+
   <!-- Table we display our rounds in -->
   <table id="roundScoresTable">
     <thead>
@@ -26,11 +36,11 @@
         </tr>
     </thead>
     <tbody>
-        
+
     </tbody>
   </table>
   <br />
-  
+
 
 <!-- Hidden table where we store our data -->
 <table id="scoreTable" style="display:none"></table>
