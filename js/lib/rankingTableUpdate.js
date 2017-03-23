@@ -6,6 +6,9 @@
 //Version: 1.0
 //Company: ScottLogic
 //Date: 17th November 2010
+
+//Adapted by Pez Cuckow
+//Date: 23rd March 2017
 (function($) {
 
     //Defines the 16 standard html colours by they hash codes - if you use others then
@@ -95,6 +98,10 @@
                 left: 0,
                 //Stay put in first stage.
                 backgroundColor: '#550055' // Purple
+            },
+            changedValue: {
+                // Only value changes
+                backgroundColor: '#ffba31' // Orange
             }
         }
     };
@@ -497,6 +504,31 @@
                 firstAnimator.addSubject(new NumericalStyleSubject(innerWrapper, "opacity", 1, 0, ""));
                 if (newCell != null) {
                     thirdAnimator.addSubject(new NumericalStyleSubject(innerWrapper, "opacity", 0, 1, ""));
+                    updateValue.push([innerWrapper, $(newCell).html()]);
+                }
+            }
+
+            //rows that aren't moving
+            if (row in stayPut) {
+                // Only for cells whose value changes
+                if (newCell != null && $(oldCell).text() != $(newCell).text()) {
+                    var animationSetting = options.animationSettings.changedValue;
+                    var animateToColor = animationSetting.backgroundColor;
+
+                    //need to inner wrapper which will allow content of cell to be removed..
+                    $(wrapper).wrapInner($('<div />', {
+                        'class': 'innerWrapper'
+                    }));
+                    var innerWrapper = $(wrapper).find(".innerWrapper")[0];
+
+                    // Hide value and highlight cell
+                    firstAnimator.addSubject(new NumericalStyleSubject(innerWrapper, "opacity", 1, 0, ""));
+                    firstAnimator.addSubject(new ColorStyleSubject(wrapper, "background-color", getColourOfBackground(oldCell), animateToColor));
+
+                    // Show new value and restore backround color
+                    thirdAnimator.addSubject(new NumericalStyleSubject(innerWrapper, "opacity", 0, 1, ""));
+                    thirdAnimator.addSubject(new ColorStyleSubject(wrapper, "background-color", animateToColor, getColourOfBackground(newCell)));
+
                     updateValue.push([innerWrapper, $(newCell).html()]);
                 }
             }
