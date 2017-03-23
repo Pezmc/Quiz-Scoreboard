@@ -16,7 +16,7 @@ exports.warn = function(message, data) {
 
 exports.info = function(message, data) {
   if(logLevel >= 2)
-  printMessage("[INFO]\t".cyan + message, data);
+    printMessage("[INFO]\t".cyan + message, data);
 }
 
 exports.debug = function(message, data) {
@@ -32,5 +32,5 @@ var printMessage = function(message, data) {
   if(typeof data != 'undefined')
     console.log(message, data);
   else
-    console.log(message); 
+    console.log(message);
 }

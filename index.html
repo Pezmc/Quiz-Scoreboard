@@ -21,20 +21,20 @@
       <div id="content">
         <h1>Teams</h1>
         <p><i>To edit, just click on the field, then click somewhere else to save.</i></p>
-        
+
         <!-- The table data where we store our data -->
         <table id="scoreTable">
         </table>
-        
+
         <br />
         <a href="#" id="addNewTeam">Add New Team</a>
         <a href="#" id="addNewRound">Add New Round</a>
         <a href="#" id="resetTable">Reset Table</a>
-        <a href="#" id="roundScoreBoard">Popup Scoreboard</a>        
-        
+        <a href="#" id="roundScoreBoard">Popup Scoreboard</a>
+
         <h1>Live Scoreboard</h1>
         <p><i>This updates any time you edit the above scoreboard.</i></p>
-        
+
         <div class="demo">
           <table id="liveScores" cellspacing="5">
             <thead>
@@ -49,15 +49,15 @@
             </tbody>
           </table>
         </div>
-        
+
         <br /><br /><br />
         <h4>Subscribe to/create update channel</h4>
         <p>
           <i>This allows other computers to update the scores.<br />
-          Server address is the location of your node server, try server.pezcuckow.com:25565 for a demo
+          Server address is the location of your node server, which should be running <code>node/server.js</code>.
           <br />The host should "create" a channel, everyone else should subscribe.</i>
         </p>
-        
+
         <div id="subscribeCreate">
           <div id="statusMessage"></div>
           <form>
@@ -66,7 +66,7 @@
               <input type="button" id="subscribe" value="Subscribe to Channel" />
               <input type="button" id="create" value="Create New Channel" />
 
-            
+
           </form><br />
           <div id="forceUpdateArea"><a href="#" id="forceUpdate">Force Update</a>
           <i id="forceUpdateMessage">If client request update from host. If host, send update to all clients.</i>
@@ -77,13 +77,13 @@
           </div>
         </div>
       </div>
-      
+
     </div>
     <div id="footer">
       Copyright &copy; Pez Cuckow
     </div>
   </div>
-  
+
 <!-- Hidden table that provides the default data -->
 <table id="emptyScoreTable" cellspacing="5" style="display:none">
   <thead>
@@ -96,9 +96,9 @@
   </tbody>
 </table>
 </div>
-</body>  
+</body>
 
-  
+
 
 
 <!-- Our JS -->
