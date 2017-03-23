@@ -293,7 +293,7 @@
                     color: colourBehindTable,
                     backgroundColor: colourBehindTable
                 }
-            }).html('a'));
+            }).html('&nbsp;'));
             for (var i = 1; i < columnsInEachRow; i++) {
                 emptyRow.append($('<td/>', {
                     css: {
