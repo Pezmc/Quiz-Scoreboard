@@ -52,8 +52,9 @@ $(function() {
       // For every column in the row, 0 is the team name...
       $(this).find('td').each(function() {
         if(round == 0) roundScores[item][round] = $(this).text();
-        else { 
-          score += parseFloat($(this).text());
+        else {
+          var value = parseFloat($(this).text());
+          score += value ? value : 0; // Handle NaN
           roundScores[item][round] = score;
         }
         

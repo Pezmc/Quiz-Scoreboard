@@ -184,8 +184,12 @@ $(function() {
       var teamName = null;
       var totalScore = 0;
       $row.find('td').each(function () {
-        if(teamName == null) teamName = $(this).text();
-        else totalScore += parseFloat($(this).text());
+        if(teamName == null) {
+          teamName = $(this).text();
+        } else {
+          var value = parseFloat($(this).text());
+          totalScore += value ? value : 0; // Handle NaN
+        }
       });
       
       $tbody.append('<tr><td>?</td><td>'+teamName+'</td><td>'+totalScore+'</td></tr>');
