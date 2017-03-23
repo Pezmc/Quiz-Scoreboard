@@ -129,6 +129,7 @@
             if(totalScore != previousTotalScore) {
               position += skipCount > 0 ? skipCount : 1;
               previousTotalScore = totalScore;
+              skipCount = 0;
             } else {
               skipCount++; 
             }
